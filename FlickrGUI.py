@@ -22,13 +22,13 @@ class Flickr(Frame):
         self.grid()
 
         #Add a label to GUI
-        self._label = Label(self, text="Here is a picture of a cat")
+        self._label = Label(self, text="Here are some pictures of cats")
         self._label.grid()
 
         #Sample Flickr search URL build from
         #https://www.flickr.com/services/api/explore/flickr.photos.search
         #Search for cat pictures, modify to search for whatever tag you want
-        flickerSearchURL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ef7824dd34a32463d9e68c038579525e&text=cat&format=json&nojsoncallback=1'
+        flickerSearchURL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ef7824dd34a32463d9e68c038579525e&tags=cat&format=json&nojsoncallback=1'
 
         #Search flickr for cat pictures
         flickrResponse = urllib.request.urlopen(flickerSearchURL)
@@ -36,44 +36,56 @@ class Flickr(Frame):
         flickrResponseJSONString = flickrResponse.read().decode('UTF-8')
         flickrResponseJson = json.loads(flickrResponseJSONString)
         #Get first json object ('photos') which contains another json object ('photo') which is an json array; each
-        # element represents one photo. Take element 1
-        firstResponsePhoto = flickrResponseJson['photos']['photo'][0]
-        #Extract thwe secret, server, id and farm; which you need to construct another URL to request a specific photo
-        #https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
+        # element represents one photo. Take element 0
+        #firstResponsePhoto = flickrResponseJson['photos']['photo'][0]
 
-        secret = firstResponsePhoto['secret']
-        id = firstResponsePhoto['id']
-        server = firstResponsePhoto['server']
-        farm = firstResponsePhoto['farm']
+        #Or, maybe you want lots of cat pictures? This fetches the first 5
 
-        print(firstResponsePhoto)  #Just checking we get the JSON we expect
-        #TODO add error handing
-
-        fetchPhotoURL = 'https://farm%s.staticflickr.com/%s/%s_%s_m.jpg' % (farm, server, id, secret)
-        print(fetchPhotoURL)   #Again, just checking
-
-        #Reference: http://stackoverflow.com/questions/13137817/how-to-download-image-using-requests
-
-        catPicFileName = 'cat.jpg'
-        catPicFileGif = 'cat.gif'
-
-        #Read the response and save it as a .jpg. Use shutil to copy the stream of bytes into a file
-        #What does 'with' mean? http://preshing.com/20110920/the-python-with-statement-by-example/
-        resp = requests.get(fetchPhotoURL, stream=True)
-        with open(catPicFileName, 'wb') as out_file:
-            shutil.copyfileobj(resp.raw, out_file)
-        del resp
+        for cat in range(0, 5):
+            jsonforphoto = flickrResponseJson['photos']['photo'][cat]
+            #deal with this in the following way. vvvvvvv
 
 
-        #Flickr returns a jpg. Tkinter displays gif. Use pillow to convert the JPG to GIF
-        #Reference https://pillow.readthedocs.org/handbook/tutorial.html
 
-        Image.open(catPicFileName).save(catPicFileGif)
+            #Extract the secret, server, id and farm; which you need to construct another URL to request a specific photo
+            #https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
 
-        #Add PictureImage to GUI
-        self._catPic = PhotoImage(file=catPicFileGif)
-        self._catPicLabel = Label(self, image=self._catPic)
-        self._catPicLabel.grid()
+            secret = jsonforphoto['secret']
+            id = jsonforphoto['id']
+            server = jsonforphoto['server']
+            farm = jsonforphoto['farm']
+
+            print(jsonforphoto)  #Just checking we get the JSON we expect
+            #TODO add error handing
+
+            fetchPhotoURL = 'https://farm%s.staticflickr.com/%s/%s_%s_m.jpg' % (farm, server, id, secret)
+            print(fetchPhotoURL)   #Again, just checking
+
+            #Reference: http://stackoverflow.com/questions/13137817/how-to-download-image-using-requests
+
+            catPicFileName = 'cat' + str(cat) + '.jpg'
+            catPicFileGif = 'cat' + str(cat) + '.gif'
+
+            #Read the response and save it as a .jpg. Use shutil to copy the stream of bytes into a file
+            #What does 'with' mean? http://preshing.com/20110920/the-python-with-statement-by-example/
+            resp = requests.get(fetchPhotoURL, stream=True)
+            with open(catPicFileName, 'wb') as out_file:
+                shutil.copyfileobj(resp.raw, out_file)
+            del resp
+
+
+            #Flickr returns a jpg. Tkinter displays gif. Use pillow to convert the JPG to GIF
+            #Reference https://pillow.readthedocs.org/handbook/tutorial.html
+
+            Image.open(catPicFileName).save(catPicFileGif)
+
+
+
+            #Add PictureImage to GUI
+            _catPic = PhotoImage(file=catPicFileGif)
+            _catPicLabel = Label(self, image=_catPic)
+            _catPicLabel.image = _catPic
+            _catPicLabel.grid()
 
 
     #Fetches weather from openweatherapi, extracts temp from json
