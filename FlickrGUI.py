@@ -5,9 +5,12 @@ import json
 import shutil
 from PIL import Image
 
+#In Pycharm, Preferences > Project interpreter, add pillow. Or add via pip or however you manage packages
+
 # A very simple application which searches Flickr for cat pictures and displays the first picture in a GUI
 # Uses tkinter for the GUI
 # Uses pillow ( a PIL fork ) to convert the jgp returned from Flickr to a GIF for tkinter
+# Uses HTTP requests to fetch data, no wrappers.
 
 
 class Flickr(Frame):
