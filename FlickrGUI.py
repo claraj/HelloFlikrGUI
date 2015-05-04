@@ -28,7 +28,7 @@ class Flickr(Frame):
         #Sample Flickr search URL build from
         #https://www.flickr.com/services/api/explore/flickr.photos.search
         #Search for cat pictures, modify to search for whatever tag you want
-        flickerSearchURL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ef7824dd34a32463d9e68c038579525e&tags=cat&format=json&nojsoncallback=1'
+        flickerSearchURL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=XXXXXX YOUR KEY HERE XXXXXXXXX&tags=cat&format=json&nojsoncallback=1'
 
         #Search flickr for cat pictures
         flickrResponse = urllib.request.urlopen(flickerSearchURL)
@@ -44,8 +44,6 @@ class Flickr(Frame):
         for cat in range(0, 5):
             jsonforphoto = flickrResponseJson['photos']['photo'][cat]
             #deal with this in the following way. vvvvvvv
-
-
 
             #Extract the secret, server, id and farm; which you need to construct another URL to request a specific photo
             #https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
@@ -63,13 +61,13 @@ class Flickr(Frame):
 
             #Reference: http://stackoverflow.com/questions/13137817/how-to-download-image-using-requests
 
-            catPicFileName = 'cat' + str(cat) + '.jpg'
+            catPicFileNameJpg = 'cat' + str(cat) + '.jpg'
             catPicFileGif = 'cat' + str(cat) + '.gif'
 
             #Read the response and save it as a .jpg. Use shutil to copy the stream of bytes into a file
             #What does 'with' mean? http://preshing.com/20110920/the-python-with-statement-by-example/
             resp = requests.get(fetchPhotoURL, stream=True)
-            with open(catPicFileName, 'wb') as out_file:
+            with open(catPicFileNameJpg, 'wb') as out_file:
                 shutil.copyfileobj(resp.raw, out_file)
             del resp
 
@@ -77,9 +75,7 @@ class Flickr(Frame):
             #Flickr returns a jpg. Tkinter displays gif. Use pillow to convert the JPG to GIF
             #Reference https://pillow.readthedocs.org/handbook/tutorial.html
 
-            Image.open(catPicFileName).save(catPicFileGif)
-
-
+            Image.open(catPicFileNameJpg).save(catPicFileGif)
 
             #Add PictureImage to GUI
             _catPic = PhotoImage(file=catPicFileGif)
