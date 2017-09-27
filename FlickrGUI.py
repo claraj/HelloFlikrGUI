@@ -1,9 +1,10 @@
 from tkinter import *
-import urllib.request
+#import urllib.request
 import requests
 import json
 import shutil
 from PIL import Image
+import key
 
 #In Pycharm, Preferences > Project interpreter, add pillow. Or add via pip or however you manage packages
 
@@ -28,7 +29,9 @@ class Flickr(Frame):
         #Sample Flickr search URL build from
         #https://www.flickr.com/services/api/explore/flickr.photos.search
         #Search for cat pictures, modify to search for whatever tag you want
-        flickerSearchURL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ef7824dd34a32463d9e68c038579525e&tags=cat&format=json&nojsoncallback=1'
+
+
+        flickerSearchURL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=%s&tags=cat&format=json&nojsoncallback=1' % key.flikrkey
 
         #Search flickr for cat pictures
         flickrResponse = urllib.request.urlopen(flickerSearchURL)
@@ -84,29 +87,6 @@ class Flickr(Frame):
             _catPicLabel.image = _catPic  #Keep a reference to the image or it doesn't show up
             _catPicLabel.grid()
 
-
-    #Fetches weather from openweatherapi, extracts temp from json
-    #not used at all in this application but I wrote this to practice fetching data from an API.
-    def getWeather(self):
-
-        #Example 2 - fetch JSON from openweathermap
-        weatherurl = 'http://api.openweathermap.org/data/2.5/weather?q=London,uk'
-        #Make request, get response
-        weatherResponse = urllib.request.urlopen(weatherurl)
-        #Read response into JSON string
-
-        wresponseJson = weatherResponse.read().decode('utf-8')
-        #Reference http://stackoverflow.com/questions/23049767/parsing-http-response-in-python
-
-        print(wresponseJson)
-        #Load JSON string into JSON parser - now can be used in a dictionary-like way
-        parsed_json = json.loads(wresponseJson)
-        #Reference http://docs.python-guide.org/en/latest/scenarios/json/
-        #What's the temp in London?
-
-        tempInKelvin = parsed_json['main']['temp']
-        tempInCelcius = int(tempInKelvin) - 273
-        print(tempInCelcius)
 
 
 def main():
