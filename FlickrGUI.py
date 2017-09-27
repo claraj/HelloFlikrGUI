@@ -1,5 +1,5 @@
 from tkinter import *
-#import urllib.request
+
 import requests
 import json
 import shutil
@@ -34,10 +34,10 @@ class Flickr(Frame):
         flickerSearchURL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=%s&tags=cat&format=json&nojsoncallback=1' % key.flikrkey
 
         #Search flickr for cat pictures
-        flickrResponse = urllib.request.urlopen(flickerSearchURL)
+        flickrResponse = requests.get(flickerSearchURL);
         #get json back
-        flickrResponseJSONString = flickrResponse.read().decode('UTF-8')
-        flickrResponseJson = json.loads(flickrResponseJSONString)
+        flickrResponseJson = flickrResponse.json()
+
         #Get first json object ('photos') which contains another json object ('photo') which is an json array; each
         # element represents one photo. Take element 0
         #firstResponsePhoto = flickrResponseJson['photos']['photo'][0]
